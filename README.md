@@ -47,6 +47,11 @@ A multi-LLM, physics-augmented system designed to predict and mitigate satellite
 * Uses Jinja2 templates to create an HTML report.
 * Optional PDF generation via `pdfkit`.
 * Includes all edges with risk scores, explanations, and maneuver recommendations.
+# Space Debris AI System Architecture
+
+This diagram illustrates the architecture of the AI system for predicting space debris collisions:
+
+<img width="512" height="768" alt="image" src="https://github.com/user-attachments/assets/4f5d19cd-9695-4d28-9328-06b4eebd7691" />
 
 ## Installation
 
