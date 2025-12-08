@@ -1,32 +1,91 @@
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+
+# Load API key from .env
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# -----------------------------
+# LLM 1: Proposal Agent
+# -----------------------------
+def llm_propose_maneuver(sat_a: str, sat_b: str, distance_km: float) -> str:
+    prompt = f"""
+Two satellites ({sat_a} and {sat_b}) will pass within {distance_km:.2f} km.
+
+Propose:
+- Which satellite should maneuver
+- A simple avoidance action (raise or lower orbit)
+- Reason in 2 lines
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3
+    )
+
+    return response.choices[0].message.content
 
 
 # -----------------------------
-# File: app/model_c/negotiation_planner.py
+# LLM 2: Critic Agent
 # -----------------------------
-"""
-Model C: Multi-LLM Negotiation Planner (prototype)
-- Simple heuristic maneuver proposer and consensus function.
-- Replaceable with real LLM negotiation flows later.
+def llm_critique_maneuver(proposal: str) -> str:
+    prompt = f"""
+Critique the following satellite maneuver plan for:
+- Fuel efficiency
+- Safety
+- Practicality
+
+Plan:
+{proposal}
 """
 
-def propose_maneuver(u: str, v: str, G):
-    du = G.degree(u)
-    dv = G.degree(v)
-    mover = u if du <= dv else v
-    d = G.edges[u, v].get('min_distance_km', 100.0)
-    # toy delta-v (km/s) heuristic
-    dv_req = min(0.5, max(0.01, (10.0 / max(1.0, d))))
-    plan = {
-        'mover': mover,
-        'delta_v_km_s': round(dv_req, 6),
-        'reason': f"Close approach (min_dist={d:.1f} km). Chosen mover has lower traffic degree."
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2
+    )
+
+    return response.choices[0].message.content
+
+
+# -----------------------------
+# LLM 3: Final Decision Agent
+# -----------------------------
+def llm_finalize_maneuver(proposal: str, critique: str) -> str:
+    prompt = f"""
+You are the final decision authority.
+
+Proposal:
+{proposal}
+
+Critique:
+{critique}
+
+Return ONLY the final approved maneuver in 3 lines.
+"""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.2
+    )
+
+    return response.choices[0].message.content
+
+
+# -----------------------------
+# FULL MULTI-LLM PIPELINE
+# -----------------------------
+def run_multi_llm_negotiation(sat_a: str, sat_b: str, distance_km: float) -> dict:
+    proposal = llm_propose_maneuver(sat_a, sat_b, distance_km)
+    critique = llm_critique_maneuver(proposal)
+    final_decision = llm_finalize_maneuver(proposal, critique)
+
+    return {
+        "proposal": proposal,
+        "critique": critique,
+        "final_decision": final_decision
     }
-    return plan
-
-
-def consensus_select(plans):
-    if not plans:
-        return None
-    # choose smallest delta-v plan as a simple consensus
-    return sorted(plans, key=lambda p: p['delta_v_km_s'])[0]
-

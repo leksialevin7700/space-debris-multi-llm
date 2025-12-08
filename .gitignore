@@ -1,0 +1,40 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pkl
+*.pyc 
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Jupyter / notebooks
+*.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# IDE / Editor junk
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Python build / packaging
+build/
+dist/
+*.egg-info/
+
+# Cache
+.cache/
+
+#API Keys
+.env
+
