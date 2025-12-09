@@ -4,26 +4,24 @@ from dotenv import load_dotenv
 import google.generativeai as genai
 from jinja2 import Template
 
-# Load Gemini API key
 load_dotenv()
+
+# Configure Gemini
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-1.5-flash")
-
+# ✅ THIS IS THE CORRECT MODEL
+model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
 
 HTML_TEMPLATE = """
 <html>
-<head>
-    <meta charset='utf-8'>
-    <title>Collision Report</title>
-</head>
+<head><meta charset='utf-8'><title>Collision Report</title></head>
 <body>
-    <h1>AI-Generated Collision Report</h1>
-    <p>Generated at: {{ generated_at }}</p>
+<h1>AI-Generated Collision Report</h1>
+<p>Generated at: {{ generated_at }}</p>
 
-    <pre style="white-space: pre-wrap; font-size: 14px; background:#f5f5f5; padding:12px; border-radius:8px;">
+<pre style="white-space: pre-wrap; font-size: 14px;">
 {{ report_text }}
-    </pre>
+</pre>
 
 </body>
 </html>
@@ -31,38 +29,21 @@ HTML_TEMPLATE = """
 
 
 def generate_llm_mission_report(risk_data, out_html_path="collision_report.html", out_pdf_path=None):
-    """
-    risk_data example:
-    [
-      {
-        "sat_a": "STARLINK-1011",
-        "sat_b": "COSMOS-2251",
-        "min_distance_km": 3.4,
-        "risk_score": 0.82,
-        "explanation": "...",
-        "proposal": "...",
-        "critique": "...",
-        "final_maneuver": "..."
-      }
-    ]
-    """
-
     prompt = f"""
 You are a professional space mission control engineer.
 
 Generate a structured collision mission report using this data:
 {risk_data}
 
-The report MUST include:
+Must include:
 - Executive Summary
 - High Risk Encounters
 - Recommended Maneuvers
 - Safety Notes
-
-Use clean technical formatting.
 """
 
-    report_text = model.generate_content(prompt).text
+    response = model.generate_content(prompt)
+    report_text = response.text
 
     tpl = Template(HTML_TEMPLATE)
     html = tpl.render(
