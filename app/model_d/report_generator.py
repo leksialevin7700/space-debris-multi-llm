@@ -10,7 +10,7 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # ✅ THIS IS THE CORRECT MODEL
-model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
+model = genai.GenerativeModel("gemini-pro")
 
 HTML_TEMPLATE = """
 <html>

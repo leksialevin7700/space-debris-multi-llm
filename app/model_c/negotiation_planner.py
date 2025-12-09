@@ -5,7 +5,7 @@ import google.generativeai as genai
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("models/gemini-1.5-pro-latest")
+model = genai.GenerativeModel("gemini-pro")
 
 
 def llm_propose_maneuver(sat_a: str, sat_b: str, distance_km: float) -> str:
