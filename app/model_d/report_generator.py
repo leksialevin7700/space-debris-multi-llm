@@ -1,12 +1,12 @@
 import os
 import datetime
 from dotenv import load_dotenv
-from google import genai
+import google.generativeai as genai
 from jinja2 import Template
 
 load_dotenv()
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 HTML_TEMPLATE = """
 <html>
@@ -37,10 +37,8 @@ Must include:
 - Safety Notes
 """
 
-    response = client.models.generate_content(
-        model="gemini-1.5-pro",
-        contents=prompt,
-    )
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
 
     report_text = response.text
 

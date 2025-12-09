@@ -1,10 +1,10 @@
 import os
 from dotenv import load_dotenv
-from google import genai
+import google.generativeai as genai
 
 load_dotenv()
 
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def llm_propose_maneuver(sat_a: str, sat_b: str, distance_km: float) -> str:
@@ -16,10 +16,8 @@ Propose:
 - A simple avoidance action (raise or lower orbit)
 - Reason in 2 lines
 """
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=prompt,
-    )
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
     return response.text
 
 
@@ -33,10 +31,8 @@ Check:
 - Safety
 - Practicality
 """
-    response = client.models.generate_content(
-        model="gemini-1.5-flash",
-        contents=prompt,
-    )
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
     return response.text
 
 
@@ -52,8 +48,18 @@ Critique:
 
 Return final approved maneuver in 3 lines only.
 """
-    response = client.models.generate_content(
-        model="gemini-1.5-pro",
-        contents=prompt,
-    )
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
     return response.text
+
+
+def run_multi_llm_negotiation(sat_a: str, sat_b: str, distance_km: float) -> dict:
+    proposal = llm_propose_maneuver(sat_a, sat_b, distance_km)
+    critique = llm_critique_maneuver(proposal)
+    final_decision = llm_finalize_maneuver(proposal, critique)
+
+    return {
+        "proposal": proposal,
+        "critique": critique,
+        "final_decision": final_decision
+    }
