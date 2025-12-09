@@ -1,11 +1,10 @@
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
+from google import genai
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-model = genai.GenerativeModel("gemini-pro")
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def llm_propose_maneuver(sat_a: str, sat_b: str, distance_km: float) -> str:
@@ -14,28 +13,36 @@ Two satellites ({sat_a} and {sat_b}) will pass within {distance_km:.2f} km.
 
 Propose:
 - Which satellite should maneuver
-- Raise or lower orbit
-- Short reasoning
+- A simple avoidance action (raise or lower orbit)
+- Reason in 2 lines
 """
-    return model.generate_content(prompt).text
+    response = client.models.generate_content(
+        model="gemini-1.5-flash",
+        contents=prompt,
+    )
+    return response.text
 
 
 def llm_critique_maneuver(proposal: str) -> str:
     prompt = f"""
-Critique this maneuver based on:
+Critique this maneuver:
+{proposal}
+
+Check:
 - Fuel efficiency
 - Safety
-- Practical feasibility
-
-Plan:
-{proposal}
+- Practicality
 """
-    return model.generate_content(prompt).text
+    response = client.models.generate_content(
+        model="gemini-1.5-flash",
+        contents=prompt,
+    )
+    return response.text
 
 
 def llm_finalize_maneuver(proposal: str, critique: str) -> str:
     prompt = f"""
-Final decision authority:
+Final decision authority.
 
 Proposal:
 {proposal}
@@ -43,18 +50,10 @@ Proposal:
 Critique:
 {critique}
 
-Return final approved maneuver in 3 lines.
+Return final approved maneuver in 3 lines only.
 """
-    return model.generate_content(prompt).text
-
-
-def run_multi_llm_negotiation(sat_a, sat_b, distance_km):
-    proposal = llm_propose_maneuver(sat_a, sat_b, distance_km)
-    critique = llm_critique_maneuver(proposal)
-    final_decision = llm_finalize_maneuver(proposal, critique)
-
-    return {
-        "proposal": proposal,
-        "critique": critique,
-        "final_decision": final_decision
-    }
+    response = client.models.generate_content(
+        model="gemini-1.5-pro",
+        contents=prompt,
+    )
+    return response.text
