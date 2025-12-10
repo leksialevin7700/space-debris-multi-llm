@@ -89,6 +89,12 @@ async def run_pipeline(
 
         llm_result = run_multi_llm_negotiation(u, v, min_dist)
 
+        # Now llm_result includes:
+        # - attempts: how many tries the agent made
+        # - confidence: final confidence score
+        # - all_attempts: history of all attempts (memory!)
+
+
         edges_info.append({
             "sat_a": u,
             "sat_b": v,
@@ -98,6 +104,8 @@ async def run_pipeline(
             "proposal": llm_result["proposal"],
             "critique": llm_result["critique"],
             "final_maneuver": llm_result["final_decision"],
+            "agent_attempts": llm_result["attempts"],  # NEW
+            "agent_confidence": llm_result["confidence"]  # NEW
         })
 
     # ---------- ✅ MODEL D (GEMINI REPORT) ----------
