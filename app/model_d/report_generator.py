@@ -44,7 +44,7 @@ Must include:
 - Safety Notes
 """
 
-    model = genai.GenerativeModel("gemini-2.5-pro")  # ✅ Using available model
+    model = genai.GenerativeModel("gemini-2.5-flash")  # ✅ Changed from pro to flash
     response = model.generate_content(prompt)
 
     report_text = response.text

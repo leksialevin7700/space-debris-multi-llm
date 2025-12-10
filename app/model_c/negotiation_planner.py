@@ -23,7 +23,7 @@ Propose:
 - A simple avoidance action (raise or lower orbit)
 - Reason in 2 lines
 """
-    model = genai.GenerativeModel("gemini-2.5-flash")  # ✅ Using available model
+    model = genai.GenerativeModel("gemini-2.5-flash")
     response = model.generate_content(prompt)
     return response.text
 
@@ -38,7 +38,7 @@ Check:
 - Safety
 - Practicality
 """
-    model = genai.GenerativeModel("gemini-2.5-flash")  # ✅ Using available model
+    model = genai.GenerativeModel("gemini-2.5-flash")
     response = model.generate_content(prompt)
     return response.text
 
@@ -55,7 +55,7 @@ Critique:
 
 Return final approved maneuver in 3 lines only.
 """
-    model = genai.GenerativeModel("gemini-2.5-pro")  # ✅ Using Pro for final decision
+    model = genai.GenerativeModel("gemini-2.5-flash")  # ✅ Changed from pro to flash
     response = model.generate_content(prompt)
     return response.text
 
