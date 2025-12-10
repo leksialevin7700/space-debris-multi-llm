@@ -1,6 +1,13 @@
 import os
 import datetime
+import mimetypes
 from dotenv import load_dotenv
+
+# FIX for Python 3.12 Windows registry issue
+if not mimetypes.inited:
+    mimetypes.init()
+    mimetypes.add_type("image/webp", ".webp")
+
 import google.generativeai as genai
 from jinja2 import Template
 
@@ -37,7 +44,7 @@ Must include:
 - Safety Notes
 """
 
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-pro")  # ✅ Using available model
     response = model.generate_content(prompt)
 
     report_text = response.text

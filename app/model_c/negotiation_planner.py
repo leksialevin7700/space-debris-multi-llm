@@ -1,5 +1,12 @@
 import os
+import mimetypes
 from dotenv import load_dotenv
+
+# FIX for Python 3.12 Windows registry issue
+if not mimetypes.inited:
+    mimetypes.init()
+    mimetypes.add_type("image/webp", ".webp")
+
 import google.generativeai as genai
 
 load_dotenv()
@@ -16,7 +23,7 @@ Propose:
 - A simple avoidance action (raise or lower orbit)
 - Reason in 2 lines
 """
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")  # ✅ Using available model
     response = model.generate_content(prompt)
     return response.text
 
@@ -31,7 +38,7 @@ Check:
 - Safety
 - Practicality
 """
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")  # ✅ Using available model
     response = model.generate_content(prompt)
     return response.text
 
@@ -48,7 +55,7 @@ Critique:
 
 Return final approved maneuver in 3 lines only.
 """
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-pro")  # ✅ Using Pro for final decision
     response = model.generate_content(prompt)
     return response.text
 
