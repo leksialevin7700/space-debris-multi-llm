@@ -1,11 +1,19 @@
 import os
 import datetime
+import mimetypes
 from dotenv import load_dotenv
-from openai import OpenAI
+
+# FIX for Python 3.12 Windows registry issue
+if not mimetypes.inited:
+    mimetypes.init()
+    mimetypes.add_type("image/webp", ".webp")
+
+import google.generativeai as genai
 from jinja2 import Template
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 HTML_TEMPLATE = """
 <html>
@@ -13,34 +21,20 @@ HTML_TEMPLATE = """
 <body>
 <h1>AI-Generated Collision Report</h1>
 <p>Generated at: {{ generated_at }}</p>
-
 <pre style="white-space: pre-wrap; font-size: 14px;">
 {{ report_text }}
 </pre>
-
 </body>
 </html>
 """
 
 
 def generate_llm_mission_report(risk_data, out_html_path="collision_report.html", out_pdf_path=None):
-    """
-    risk_data example:
-    [
-      {
-        "sat_a": "STARLINK-1011",
-        "sat_b": "COSMOS-2251",
-        "min_distance_km": 3.4,
-        "risk_score": 0.82,
-        "final_maneuver": "Raise STARLINK-1011 orbit by 1 km"
-      }
-    ]
-    """
 
     prompt = f"""
 You are a professional space mission control engineer.
 
-Generate a structured collision mission report using this data:
+Generate a structured mission report from this data:
 {risk_data}
 
 Must include:
@@ -50,13 +44,10 @@ Must include:
 - Safety Notes
 """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.3
-    )
+    model = genai.GenerativeModel("gemini-2.5-flash")  # ✅ Changed from pro to flash
+    response = model.generate_content(prompt)
 
-    report_text = response.choices[0].message.content
+    report_text = response.text
 
     tpl = Template(HTML_TEMPLATE)
     html = tpl.render(
