@@ -38,3 +38,5 @@ dist/
 #API Keys
 .env
 
+#node modules
+node_modules
