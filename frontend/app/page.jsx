@@ -53,9 +53,11 @@ const OrbitalGuardian = () => {
   // Fetch risk pairs
   const fetchRiskPairs = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/risks`);
+      const res = await fetch(`${API_BASE}/api/orbit-graph`);
       const data = await res.json();
-      setRiskPairs(data.pairs || []);
+
+      // riskPairs should show HIGH-RISK EDGES
+      setRiskPairs(data.edges || []);
     } catch (error) {
       console.error("Failed to fetch risks:", error);
     }
@@ -69,44 +71,6 @@ const OrbitalGuardian = () => {
       setOrbitData(data);
     } catch (error) {
       console.error("Failed to fetch orbit data:", error);
-    }
-  };
-
-  // Trigger new analysis
-  const runAnalysis = async () => {
-    setIsAnalyzing(true);
-    setLogs([]);
-
-    try {
-      const res = await fetch(`${API_BASE}/api/analyze`, {
-        method: "POST",
-      });
-
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split("\n").filter((l) => l.trim());
-
-        lines.forEach((line) => {
-          if (line.startsWith("data: ")) {
-            const logEntry = line.slice(6);
-            setLogs((prev) => [...prev, logEntry]);
-          }
-        });
-      }
-
-      await fetchStats();
-      await fetchRiskPairs();
-      await fetchOrbitData();
-    } catch (error) {
-      console.error("Analysis failed:", error);
-    } finally {
-      setIsAnalyzing(false);
     }
   };
 
@@ -189,6 +153,88 @@ const OrbitalGuardian = () => {
       a.click();
     } catch (error) {
       console.error("Report download failed:", error);
+    }
+  };
+
+  const runAnalysis = async () => {
+    setIsAnalyzing(true);
+    setLogs([]); // Clear previous logs
+
+    try {
+      const res = await fetch(`${API_BASE}/api/analyze`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          console.log("Stream complete");
+          break;
+        }
+
+        // Decode the chunk
+        buffer += decoder.decode(value, { stream: true });
+
+        // Split by newlines to get individual SSE messages
+        const lines = buffer.split("\n");
+
+        // Keep the last incomplete line in the buffer
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const jsonStr = line.slice(6); // Remove "data: " prefix
+              const data = JSON.parse(jsonStr);
+
+              // Handle different message types
+              if (data.log) {
+                setLogs((prev) => [...prev, data.log]);
+                console.log(`[${data.stage}] ${data.log}`);
+              }
+
+              if (data.error) {
+                console.error("Error:", data.error);
+                setLogs((prev) => [...prev, `❌ Error: ${data.error}`]);
+              }
+
+              if (data.summary) {
+                console.log("Pipeline summary:", data.summary);
+                setLogs((prev) => [
+                  ...prev,
+                  `📊 Summary: ${data.summary.num_nodes} satellites, ${data.summary.num_edges} close approaches, ${data.summary.high_risk} high-risk events`,
+                ]);
+              }
+            } catch (e) {
+              console.error("Failed to parse JSON:", e, "Line:", line);
+            }
+          }
+        }
+      }
+
+      // Refresh all data after pipeline completes
+      await fetchStats();
+      await fetchRiskPairs();
+      await fetchOrbitData();
+
+      setLogs((prev) => [...prev, "✅ All data refreshed!"]);
+    } catch (error) {
+      console.error("Analysis failed:", error);
+      setLogs((prev) => [...prev, `❌ Analysis failed: ${error.message}`]);
+    } finally {
+      setIsAnalyzing(false);
     }
   };
 
