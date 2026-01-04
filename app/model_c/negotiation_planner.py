@@ -15,7 +15,7 @@ from google import genai
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 
-def call_adk_model(prompt: str, model: str = "gemini-2.5-flash", max_tokens: int = 512) -> str:
+def call_adk_model(prompt: str, model: str = "gemini-2.5-flash", max_tokens: int = 1024) -> str:
     """
     Wrapper around the Google Generative AI API.
     """
@@ -42,6 +42,12 @@ def llm_propose_maneuver(sat_a: str, sat_b: str, distance_km: float) -> str:
     prompt = f"""
 Two satellites ({sat_a} and {sat_b}) will pass within {distance_km:.2f} km.
 
+Assume:
+- {sat_a} is a commercial satellite
+- {sat_b} is a government satellite
+- Government satellites have higher mission priority
+- Only ONE satellite should maneuver
+
 Propose:
 - Which satellite should maneuver
 - A simple avoidance action (raise or lower orbit)
@@ -61,7 +67,13 @@ Check:
 - Practicality
 
 Return your critique and a CONFIDENCE score (0-100) at the end.
-Format: "CONFIDENCE: XX"
+
+IMPORTANT:
+- The FIRST line MUST be exactly:
+CONFIDENCE: <number between 0 and 100>
+
+Then provide the critique.
+
 """
     return call_adk_model(prompt, model="gemini-2.5-flash")
 
