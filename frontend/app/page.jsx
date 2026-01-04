@@ -37,7 +37,8 @@ const OrbitalGuardian = () => {
   const [orbitData, setOrbitData] = useState(null);
 
   // API Base URL - change this to your backend
-  const API_BASE = "http://localhost:8000";
+const API_BASE = "http://127.0.0.1:8000";
+
 
   // Fetch dashboard stats
   const fetchStats = async () => {
@@ -76,55 +77,47 @@ const OrbitalGuardian = () => {
 
   // Handle TLE file upload
   const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const file = e.target.files[0];
+  if (!file) return;
 
-    setIsProcessing(true);
-    setUploadProgress(0);
-    setLogs([]);
+  setIsProcessing(true);
+  setUploadProgress(30);
+  setLogs([]);
 
-    const formData = new FormData();
-    formData.append("tle_file", file);
+  const formData = new FormData();
+  formData.append("tle_file", file);
 
-    try {
-      const res = await fetch(`${API_BASE}/api/upload`, {
-        method: "POST",
-        body: formData,
-      });
+  try {
+    const res = await fetch(`${API_BASE}/api/upload`, {
+      method: "POST",
+      body: formData,
+    });
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        const lines = chunk.split("\n").filter((l) => l.trim());
-
-        lines.forEach((line) => {
-          if (line.startsWith("data: ")) {
-            const logEntry = line.slice(6);
-            setLogs((prev) => [...prev, logEntry]);
-          }
-        });
-
-        setUploadProgress((prev) => Math.min(prev + 10, 90));
-      }
-
-      setUploadProgress(100);
-      await fetchStats();
-      await fetchOrbitData();
-
-      const satRes = await fetch(`${API_BASE}/api/satellites`);
-      const satData = await satRes.json();
-      setSatellites(satData.satellites || []);
-    } catch (error) {
-      console.error("Upload failed:", error);
-    } finally {
-      setIsProcessing(false);
+    if (!res.ok) {
+      throw new Error("Upload failed");
     }
-  };
+
+    const data = await res.json();
+
+    setLogs((prev) => [...prev, "✅ Upload complete"]);
+    setLogs((prev) => [...prev, "🛰️ Orbit processing finished"]);
+
+    setUploadProgress(100);
+
+    await fetchStats();
+    await fetchOrbitData();
+
+    const satRes = await fetch(`${API_BASE}/api/satellites`);
+    const satData = await satRes.json();
+    setSatellites(satData.satellites || []);
+  } catch (err) {
+    console.error(err);
+    setLogs((prev) => [...prev, "❌ Upload failed"]);
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
 
   // Request maneuver simulation
   const simulateManeuver = async (sat1, sat2, distance) => {
@@ -141,98 +134,81 @@ const OrbitalGuardian = () => {
     }
   };
 
-  // Download report
   const downloadReport = async () => {
-    try {
-      const res = await fetch(`${API_BASE}/api/report/pdf`);
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `collision_report_${Date.now()}.pdf`;
-      a.click();
-    } catch (error) {
-      console.error("Report download failed:", error);
+  try {
+    const res = await fetch(`${API_BASE}/api/report/pdf`);
+    
+    // Check if the response is actually a PDF
+    const contentType = res.headers.get("content-type");
+    if (!res.ok || !contentType || !contentType.includes("pdf")) {
+      const errorData = await res.json();
+      alert(`Error: ${errorData.error || "PDF not ready"}`);
+      return;
     }
-  };
+
+    // Convert to blob
+    const blob = await res.blob();
+    
+    // Create URL
+    const url = window.URL.createObjectURL(blob);
+    
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = `Satellite_Report_${Date.now()}.pdf`;
+    
+    document.body.appendChild(a);
+    a.click();
+    
+    // Give the browser a moment to start the download before cleanup
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 100);
+
+  } catch (error) {
+    console.error("Download failed:", error);
+    alert("Check if the backend server is running and the report was generated.");
+  }
+};
 
   const runAnalysis = async () => {
     setIsAnalyzing(true);
-    setLogs([]); // Clear previous logs
+    setLogs([]); 
 
     try {
-      const res = await fetch(`${API_BASE}/api/analyze`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
+      const res = await fetch(`${API_BASE}/api/analyze`, { method: "POST" });
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
 
       while (true) {
         const { done, value } = await reader.read();
+        if (done) break;
 
-        if (done) {
-          console.log("Stream complete");
-          break;
-        }
-
-        // Decode the chunk
         buffer += decoder.decode(value, { stream: true });
-
-        // Split by newlines to get individual SSE messages
         const lines = buffer.split("\n");
-
-        // Keep the last incomplete line in the buffer
         buffer = lines.pop() || "";
 
         for (const line of lines) {
           if (line.startsWith("data: ")) {
-            try {
-              const jsonStr = line.slice(6); // Remove "data: " prefix
-              const data = JSON.parse(jsonStr);
-
-              // Handle different message types
-              if (data.log) {
-                setLogs((prev) => [...prev, data.log]);
-                console.log(`[${data.stage}] ${data.log}`);
-              }
-
-              if (data.error) {
-                console.error("Error:", data.error);
-                setLogs((prev) => [...prev, `❌ Error: ${data.error}`]);
-              }
-
-              if (data.summary) {
-                console.log("Pipeline summary:", data.summary);
-                setLogs((prev) => [
-                  ...prev,
-                  `📊 Summary: ${data.summary.num_nodes} satellites, ${data.summary.num_edges} close approaches, ${data.summary.high_risk} high-risk events`,
-                ]);
-              }
-            } catch (e) {
-              console.error("Failed to parse JSON:", e, "Line:", line);
+            const data = JSON.parse(line.slice(6));
+            if (data.log) setLogs((prev) => [...prev, data.log]);
+            
+            // If Model D finishes, offer the download
+            if (data.stage === "model_d_complete") {
+              setLogs((prev) => [...prev, "✨ PDF Report is ready for download!"]);
             }
           }
         }
       }
 
-      // Refresh all data after pipeline completes
       await fetchStats();
       await fetchRiskPairs();
       await fetchOrbitData();
 
-      setLogs((prev) => [...prev, "✅ All data refreshed!"]);
     } catch (error) {
       console.error("Analysis failed:", error);
-      setLogs((prev) => [...prev, `❌ Analysis failed: ${error.message}`]);
     } finally {
       setIsAnalyzing(false);
     }
@@ -918,12 +894,12 @@ const OrbitalGuardian = () => {
           </p>
           <div className="flex gap-3">
             <button
-              onClick={downloadReport}
-              className="flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white px-6 py-3 rounded-xl font-medium hover:shadow-lg hover:shadow-cyan-500/50 transition-all"
-            >
-              <Download size={20} />
-              Download PDF
-            </button>
+      onClick={downloadReport}
+      className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-rose-600 text-white px-6 py-4 rounded-xl font-medium hover:shadow-lg hover:shadow-rose-500/50 transition-all border border-rose-400/30"
+    >
+      <Download size={20} />
+      Download PDF Report
+    </button>
             <button className="flex items-center gap-2 bg-slate-800 text-white px-6 py-3 rounded-xl font-medium hover:bg-slate-700 border border-slate-700 hover:border-cyan-500/50 transition-all">
               <FileText size={20} />
               Print
