@@ -1,4 +1,4 @@
-# AI space debris multi llm
+# Orbital Guardian – Multi‑LLM Space Debris Intelligence System
 
 ## Overview
 
@@ -17,7 +17,7 @@ A multi-LLM, physics-augmented system designed to predict and mitigate satellite
 
 ## Technical Implementation
 
-### Model A: Orbit Intelligence Engine
+### Model A: Orbit Intelligence Engines
 
 * Fetches TLEs from Celestrak URLs.
 * Converts TLEs to `Satrec` objects from `sgp4`.
