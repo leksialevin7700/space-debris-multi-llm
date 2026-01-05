@@ -1,76 +1,157 @@
-# Orbital Guardian – Multi‑LLM Space Debris Intelligence System
+# 🛰️ Orbital Guardian
 
-## Overview
+### **Multi-LLM Space Debris Intelligence & Maneuver Planning System**
 
-A multi-LLM, physics-augmented system designed to predict and mitigate satellite–debris collisions in Low Earth Orbit (LEO). This project integrates orbital mechanics with AI heuristics and LLM-based explanations to provide early warnings, risk assessment, and recommended avoidance maneuvers.
+> **An agentic, physics-augmented AI system for predicting satellite–debris collisions and autonomously recommending safe, fuel-optimal avoidance maneuvers in Low Earth Orbit (LEO).**
+
+---
+
+## 🌍 Overview
+
+**Orbital Guardian** is an end-to-end **space situational awareness (SSA)** platform that combines:
+
+* **Orbital mechanics (SGP4 + TLEs)**
+* **Graph-based collision intelligence**
+* **Multi-LLM agent reasoning**
+* **Autonomous maneuver planning**
+* **Mission-ready reporting APIs**
+
+The system ingests real orbital data, detects high-risk conjunctions, reasons about collision severity, and uses an **LLM-driven Maneuver Agent** to propose, critique, iterate, and finalize collision-avoidance maneuvers — all with explainability and confidence scoring.
 
 
-## Features
+---
 
-| Component                               | Description                                                                                                                                                                                                  |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Orbit Intelligence Engine (Model A)     | Fetches Two-Line Element (TLE) data from public sources, propagates satellite orbits using sgp4, and constructs a semantic graph of satellites and debris (nodes = objects, edges = potential conjunctions). |
-| Collision Risk Predictor (Model B)      | Uses graph heuristics (placeholder for GNN) to compute risk scores for each potential collision and provides textual explanations.                                                                           |
-| Multi-LLM Negotiation Planner (Model C) | Proposes optimal avoidance maneuvers based on satellite traffic, delta-v minimization, and collision risk.                                                                                                   |
-| Mission Report Generator (Model D)      | Generates detailed HTML/PDF reports for engineers and mission control, summarizing collision risks and recommended maneuvers.                                                                                |
-| FastAPI backend                         | API endpoints for running the full pipeline (/run_pipeline) and fetching reports (/report).                        
+## 🚀 System Architecture
 
-## Technical Implementation
+```
+TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
+                                           │
+                                           ▼
+                               Collision Risk Predictor
+                                           │
+                                           ▼
+                            LLM Maneuver Agent (Model-C)
+                                           │
+                                           ▼
+                                     Mission Reports
+                                           │
+                                           ▼
+                                          API 
+```
 
-### Model A: Orbit Intelligence Engines
+---
 
-* Fetches TLEs from Celestrak URLs.
-* Converts TLEs to `Satrec` objects from `sgp4`.
-* Propagates satellite positions over time.
-* Builds a NetworkX semantic graph where:
+## ✨ Key Features
 
-  * Nodes represent satellites with TLE attributes.
-  * Edges represent potential close approaches, storing minimum distance.
+| Component                                   | Description                                                                                                                                      |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 🛰️ **Orbit Intelligence Engine (Model-A)** | Fetches real TLE data, propagates orbits using **SGP4**, and builds a **semantic graph** of satellites & debris with potential conjunction edges |
+| 📊 **Collision Risk Predictor (Model-B)**   | Computes heuristic collision risk scores using **distance thresholds** and **orbital traffic density** (GNN-ready design)                        |
+| 🤖 **LLM Maneuver Agent (Model-C)**         | Agentic LLM system that **proposes, self-critiques, retries, and finalizes** collision-avoidance maneuvers with confidence scoring               |
+| 🧠 **Agentic Reasoning Loop**               | Confidence-based retry mechanism ensures higher-quality decisions                                                                                |
+| 📄 **Mission Report Generation (Model-D)**   | Auto-generates **PDF mission reports** summarizing risks, explanations, and maneuver recommendations                                        |
+| ⚡ **FastAPI Backend**                       | Production-ready APIs for running pipelines and fetching reports                                                                                 |
+| 🐳 **Dockerized Deployment**                | CLI + Web + Compose support                                                                                                                      |
 
-### Model B: Collision Risk Predictor
+---
 
-* Computes a heuristic risk score per edge based on:
+## 🧠 Model-A: Orbit Intelligence Engine
 
-  * Minimum distance between satellites.
-  * Node degree (satellite traffic).
-* Generates textual explanations for each edge.
-* Placeholder for future Graph Neural Network integration.
+* Fetches **Two-Line Element (TLE)** data from **Celestrak**
+* Converts TLEs into `Satrec` objects using `sgp4`
+* Propagates satellite positions over time
+* Builds a **NetworkX semantic graph**:
 
-### Model C: Multi-LLM Negotiation Planner
+  * **Nodes** → Satellites / debris (with orbital metadata)
+  * **Edges** → Potential conjunctions
+  * **Edge attributes** → Minimum distance, time of closest approach
 
-* Simplified prototype uses heuristic to select satellite for maneuver based on traffic degree and distance.
-* Computes recommended delta-v to avoid collisions.
-* Consensus module picks the maneuver with the lowest delta-v.
+---
 
-### Model D: Mission Report Generator
+## 📉 Model-B: Collision Risk Predictor
 
-* Uses Jinja2 templates to create an HTML report.
-* Optional PDF generation via `pdfkit`.
-* Includes all edges with risk scores, explanations, and maneuver recommendations.
-# Space Debris AI System Architecture
+* Computes risk scores using:
 
-This diagram illustrates the architecture of the AI system for predicting space debris collisions:
+  * Minimum separation distance
+  * Local orbital traffic density (node degree)
+* Generates **human-readable explanations**
+* Designed as a **drop-in replacement** for future **Graph Neural Networks (GNNs)**
 
-<img width="512" height="768" alt="image" src="https://github.com/user-attachments/assets/4f5d19cd-9695-4d28-9328-06b4eebd7691" />
+---
 
-## Installation
+## 🤖 Model-C: LLM Maneuver Agent (Agentic Core)
+
+> **Replaces traditional heuristic planners with an autonomous AI decision-maker**
+
+### 🧩 What Makes It Unique?
+
+* **LLM-agnostic** via adapter (`call_adk_model`)
+* Works with **Gemini / OpenAI / any ADK-compatible LLM**
+* Implements an **Agentic Workflow**:
+
+#### 🔁 Agent Loop
+
+**Propose → Self-Critique → Decide → Finalize**
+
+#### 🧠 Decision Logic
+
+* If **confidence ≥ 80%** → finalize maneuver
+* If confidence < threshold → retry with improved reasoning
+* Otherwise → finalize best available proposal
+
+---
+
+### 📤 Output Schema
+
+```json
+{
+  "final_decision": "Concise approved maneuver (≤ 3 lines)",
+  "proposal": "Initial maneuver proposal",
+  "critique": "Self-critique with CONFIDENCE score",
+  "confidence": 87,
+  "attempts": 2,
+  "all_attempts": [
+    {"proposal": "...", "confidence": 62},
+    {"proposal": "...", "confidence": 87}
+  ]
+}
+```
+
+This structure is **log-ready**, **audit-friendly**, and **pipeline-integratable**.
+
+---
+
+## 📄 Model-D: Mission Report Generator
+
+* Uses **Jinja2** for templated reports
+* Optional **PDF generation** via `pdfkit`
+* Includes:
+
+  * All detected conjunctions
+  * Risk scores & explanations
+  * Final LLM-approved maneuver decisions
+
+---
+
+---
+
+## ⚙️ Installation
 
 ```bash
-# Clone repository
-git clone <git@github.com:leksialevin7700/space-debris-multi-llm.git>
+git clone git@github.com:leksialevin7700/space-debris-multi-llm.git
 cd space-debris-multi-llm
 
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate   # Windows: venv\Scripts\activate
 
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-## Usage
+---
 
-### Offline Demo
+## ▶️ Usage
+
+### 🔹 Offline Demo
 
 ```bash
 python run.py
@@ -78,22 +159,74 @@ python run.py
 
 Generates a sample collision report using bundled TLE data.
 
-### API Mode
+---
+
+### 🔹 API Mode
 
 ```bash
 uvicorn app.api.main:app --reload
 ```
 
-* Run full pipeline: `http://localhost:8000/run_pipeline`
-* Fetch report: `http://localhost:8000/report`
+Endpoints:
 
-## Future Enhancements
+* `POST /run_pipeline` → Run full SSA + maneuver pipeline
+* `GET /report` → Fetch mission report
 
-* Replace heuristic risk scoring with a trained Graph Neural Network.
-* Integrate LLM agents for dynamic negotiation and explanation.
-* Interactive visualization dashboard using React/Three.js.
-* Support for live TLE streams and interplanetary debris prediction.
+---
 
-## License
+## 🧪 Maneuver Agent – CLI Usage
+
+```bash
+python main.py SAT-A SAT-B --distance-km 0.12 --format yaml -o out.yaml
+```
+
+---
+
+## 🌐 Maneuver Agent – Web API
+
+```bash
+python main.py --start-web --host 0.0.0.0 --port 8000
+```
+
+Example request:
+
+```bash
+curl -X POST http://localhost:8000/negotiate \
+  -H "Content-Type: application/json" \
+  -d '{"sat_a":"SAT-A","sat_b":"SAT-B","distance_km":0.12}'
+```
+
+---
+
+## 🐳 Docker Support
+
+### Build
+
+```bash
+docker build -t orbital-guardian:latest .
+```
+
+### Run (Web)
+
+```bash
+docker run --rm --env-file .env -p 8000:8000 \
+  orbital-guardian:latest
+```
+
+---
+
+## 🔮 Future Enhancements
+
+* Graph Neural Networks (GNNs) for collision risk prediction
+* Multi-agent LLM negotiation between satellite operators
+* Real-time TLE streaming
+* 3D orbital visualization using **React + Three.js**
+* Interplanetary debris modeling
+
+---
+
+## 📜 License
 
 MIT License
+
+---
