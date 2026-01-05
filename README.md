@@ -121,7 +121,7 @@ This structure is **log-ready**, **audit-friendly**, and **pipeline-integratable
 
 ---
 
-## 📄 Model-D: Mission Report Generator
+## 📄 Model-D: Mission Report Generation
 
 * Uses **Jinja2** for templated reports
 * Optional **PDF generation** via `pdfkit`
