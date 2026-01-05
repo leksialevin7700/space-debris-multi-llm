@@ -6,7 +6,7 @@
 
 ---
 
-## 🌍 Overview
+## Overview
 
 **Orbital Guardian** is an end-to-end **space situational awareness (SSA)** platform that combines:
 
@@ -21,7 +21,7 @@ The system ingests real orbital data, detects high-risk conjunctions, reasons ab
 
 ---
 
-## 🚀 System Architecture
+##  System Architecture
 
 ```
 TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
@@ -41,7 +41,7 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 | Component                                   | Description                                                                                                                                      |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -55,7 +55,7 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 
 ---
 
-## 🧠 Model-A: Orbit Intelligence Engine
+##  Model-A: Orbit Intelligence Engine
 
 * Fetches **Two-Line Element (TLE)** data from **Celestrak**
 * Converts TLEs into `Satrec` objects using `sgp4`
@@ -68,7 +68,7 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 
 ---
 
-## 📉 Model-B: Collision Risk Predictor
+##  Model-B: Collision Risk Predictor
 
 * Computes risk scores using:
 
@@ -79,11 +79,11 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 
 ---
 
-## 🤖 Model-C: LLM Maneuver Agent (Agentic Core)
+##  Model-C: LLM Maneuver Agent (Agentic Core)
 
 > **Replaces traditional heuristic planners with an autonomous AI decision-maker**
 
-### 🧩 What Makes It Unique?
+###  What Makes It Unique?
 
 * **LLM-agnostic** via adapter (`call_adk_model`)
 * Works with **Gemini / OpenAI / any ADK-compatible LLM**
@@ -93,7 +93,7 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 
 **Propose → Self-Critique → Decide → Finalize**
 
-#### 🧠 Decision Logic
+#### Decision Logic
 
 * If **confidence ≥ 80%** → finalize maneuver
 * If confidence < threshold → retry with improved reasoning
@@ -101,7 +101,7 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 
 ---
 
-### 📤 Output Schema
+### Output Schema
 
 ```json
 {
@@ -121,7 +121,7 @@ This structure is **log-ready**, **audit-friendly**, and **pipeline-integratable
 
 ---
 
-## 📄 Model-D: Mission Report Generation
+##  Model-D: Mission Report Generation
 
 * Uses **Jinja2** for templated reports
 * Optional **PDF generation** via `pdfkit`
@@ -135,7 +135,7 @@ This structure is **log-ready**, **audit-friendly**, and **pipeline-integratable
 
 ---
 
-## ⚙️ Installation
+##  Installation
 
 ```bash
 git clone git@github.com:leksialevin7700/space-debris-multi-llm.git
@@ -149,7 +149,7 @@ pip install -r requirements.txt
 
 ---
 
-## ▶️ Usage
+##  Usage
 
 ### 🔹 Offline Demo
 
@@ -174,7 +174,7 @@ Endpoints:
 
 ---
 
-## 🧪 Maneuver Agent – CLI Usage
+##  Maneuver Agent – CLI Usage
 
 ```bash
 python main.py SAT-A SAT-B --distance-km 0.12 --format yaml -o out.yaml
@@ -182,7 +182,7 @@ python main.py SAT-A SAT-B --distance-km 0.12 --format yaml -o out.yaml
 
 ---
 
-## 🌐 Maneuver Agent – Web API
+##  Maneuver Agent – Web API
 
 ```bash
 python main.py --start-web --host 0.0.0.0 --port 8000
@@ -215,7 +215,7 @@ docker run --rm --env-file .env -p 8000:8000 \
 
 ---
 
-## 🔮 Future Enhancements
+##  Future Enhancements
 
 * Graph Neural Networks (GNNs) for collision risk prediction
 * Multi-agent LLM negotiation between satellite operators
