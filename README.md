@@ -1,4 +1,4 @@
-# 🛰️ Orbital Guardian
+    # 🛰️ Orbital Guardian
 
 ### **Multi-LLM Space Debris Intelligence & Maneuver Planning System**
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-**Orbital Guardian** is an end-to-end **space situational awareness (SSA)** platform that combines:
+**This is an end-to-end **space situational awareness (SSA)** platform that combines:
 
 * **Orbital mechanics (SGP4 + TLEs)**
 * **Graph-based collision intelligence**
