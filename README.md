@@ -46,38 +46,17 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 | Component                                   | Description                                                                                                                                      |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 🛰️ **Orbit Intelligence Engine (Model-A)** | Fetches real TLE data, propagates orbits using **SGP4**, and builds a **semantic graph** of satellites & debris with potential conjunction edges |
-| 📊 **Collision Risk Predictor (Model-B)**   | Computes heuristic collision risk scores using **distance thresholds** and **orbital traffic density** (GNN-ready design)                        |
-| 🤖 **LLM Maneuver Agent (Model-C)**         | Agentic LLM system that **proposes, self-critiques, retries, and finalizes** collision-avoidance maneuvers with confidence scoring               |
-| 🧠 **Agentic Reasoning Loop**               | Confidence-based retry mechanism ensures higher-quality decisions                                                                                |
-| 📄 **Mission Report Generation (Model-D)**   | Auto-generates **PDF mission reports** summarizing risks, explanations, and maneuver recommendations                                        |
-| ⚡ **FastAPI Backend**                       | Production-ready APIs for running pipelines and fetching reports                                                                                 |
+|  **Collision Risk Predictor (Model-B)**   | Computes heuristic collision risk scores using **distance thresholds** and **orbital traffic density** (GNN-ready design)                        |
+|  **LLM Maneuver Agent (Model-C)**         | Agentic LLM system that **proposes, self-critiques, retries, and finalizes** collision-avoidance maneuvers with confidence scoring               |
+|  **Agentic Reasoning Loop**               | Confidence-based retry mechanism ensures higher-quality decisions                                                                                |
+|  **Mission Report Generation (Model-D)**   | Auto-generates **PDF mission reports** summarizing risks, explanations, and maneuver recommendations                                        |
+|  **FastAPI Backend**                       | Production-ready APIs for running pipelines and fetching reports                                                                                 |
 | 🐳 **Dockerized Deployment**                | CLI + Web + Compose support                                                                                                                      |
 
 ---
 
-##  Model-A: Orbit Intelligence Engine
 
-* Fetches **Two-Line Element (TLE)** data from **Celestrak**
-* Converts TLEs into `Satrec` objects using `sgp4`
-* Propagates satellite positions over time
-* Builds a **NetworkX semantic graph**:
 
-  * **Nodes** → Satellites / debris (with orbital metadata)
-  * **Edges** → Potential conjunctions
-  * **Edge attributes** → Minimum distance, time of closest approach
-
----
-
-##  Model-B: Collision Risk Predictor
-
-* Computes risk scores using:
-
-  * Minimum separation distance
-  * Local orbital traffic density (node degree)
-* Generates **human-readable explanations**
-* Designed as a **drop-in replacement** for future **Graph Neural Networks (GNNs)**
-
----
 
 ##  Model-C: LLM Maneuver Agent (Agentic Core)
 
@@ -86,7 +65,7 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 ###  What Makes It Unique?
 
 * **LLM-agnostic** via adapter (`call_adk_model`)
-* Works with **Gemini / OpenAI / any ADK-compatible LLM**
+* Works with **any ADK-compatible LLM**
 * Implements an **Agentic Workflow**:
 
 #### 🔁 Agent Loop
@@ -119,17 +98,7 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 
 This structure is **log-ready**, **audit-friendly**, and **pipeline-integratable**.
 
----
 
-##  Model-D: Mission Report Generation
-
-* Uses **Jinja2** for templated reports
-* Optional **PDF generation** via `pdfkit`
-* Includes:
-
-  * All detected conjunctions
-  * Risk scores & explanations
-  * Final LLM-approved maneuver decisions
 
 ---
 
@@ -224,7 +193,7 @@ docker run --rm --env-file .env -p 8000:8000 \
 * Interplanetary debris modeling
 
 ---
-## still building
+## Under Development
 
 ## 📜 License
 
