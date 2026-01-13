@@ -136,12 +136,6 @@ Generates a sample collision report using bundled TLE data.
 uvicorn app.api.main:app --reload
 ```
 
-Endpoints:
-
-* `POST /run_pipeline` → Run full SSA + maneuver pipeline
-* `GET /report` → Fetch mission report
-
----
 
 ##  Maneuver Agent – CLI Usage
 
