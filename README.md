@@ -45,7 +45,7 @@ TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
 
 | Component                                   | Description                                                                                                                                      |
 | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 🛰️ **Orbit Intelligence Engine (Model-A)** | Fetches real TLE data, propagates orbits using **SGP4**, and builds a **semantic graph** of satellites & debris with potential conjunction edges |
+|  **Orbit Intelligence Engine (Model-A)** | Fetches real TLE data, propagates orbits using **SGP4**, and builds a **semantic graph** of satellites & debris with potential conjunction edges |
 |  **Collision Risk Predictor (Model-B)**   | Computes heuristic collision risk scores using **distance thresholds** and **orbital traffic density** (GNN-ready design)                        |
 |  **LLM Maneuver Agent (Model-C)**         | Agentic LLM system that **proposes, self-critiques, retries, and finalizes** collision-avoidance maneuvers with confidence scoring               |
 |  **Agentic Reasoning Loop**               | Confidence-based retry mechanism ensures higher-quality decisions                                                                                |
