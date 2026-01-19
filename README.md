@@ -1,4 +1,4 @@
-### 🛰️ Orbital Guardian
+###  Orbital Guardian
 
 ### **Multi-LLM Space Debris Intelligence & Maneuver Planning System**
 
