@@ -1,7 +1,4 @@
 
-# -----------------------------
-# File: run_demo.py
-# -----------------------------
 """
 A small CLI demo that runs the pipeline offline using bundled SAMPLE_TLES.
 
