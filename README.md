@@ -1,7 +1,7 @@
 ## 🌐 Project Blog / Website
 
 📖 Read the detailed project blog here:  
-[Visit the site](https://wonderful-trifle-67e81d.netlify.app/)
+[![Project Blog](https://img.shields.io/badge/Project-Blog-blue)](https://your-blog-link-here)
 
 ### **Multi-LLM Space Debris Intelligence & Maneuver Planning System**
 
