@@ -4,8 +4,6 @@
 
 ### **Multi-LLM Space Debris Intelligence & Maneuver Planning System**
 
-> **An agentic, physics-augmented AI system for predicting satellite–debris collisions and autonomously recommending safe, fuel-optimal avoidance maneuvers in Low Earth Orbit (LEO).**
-
 ---
 
 ## Overview
