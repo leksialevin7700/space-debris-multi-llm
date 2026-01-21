@@ -16,54 +16,6 @@
 |  **FastAPI Backend**                       | Production-ready APIs for running pipelines and fetching reports                                                                                 |
 | 🐳 **Dockerized Deployment**                | CLI + Web + Compose support                                                                                                                      |
 
----
-
-
-
-
-##  Model-C: LLM Maneuver Agent (Agentic Core)
-
-> **Replaces traditional heuristic planners with an autonomous AI decision-maker**
-
-###  What Makes It Unique?
-
-* **LLM-agnostic** via adapter (`call_adk_model`)
-* Works with **any ADK-compatible LLM**
-* Implements an **Agentic Workflow**:
-
-#### 🔁 Agent Loop
-
-**Propose → Self-Critique → Decide → Finalize**
-
-#### Decision Logic
-
-* If **confidence ≥ 80%** → finalize maneuver
-* If confidence < threshold → retry with improved reasoning
-* Otherwise → finalize best available proposal
-
----
-
-### Output Schema
-
-```json
-{
-  "final_decision": "Concise approved maneuver (≤ 3 lines)",
-  "proposal": "Initial maneuver proposal",
-  "critique": "Self-critique with CONFIDENCE score",
-  "confidence": 87,
-  "attempts": 2,
-  "all_attempts": [
-    {"proposal": "...", "confidence": 62},
-    {"proposal": "...", "confidence": 87}
-  ]
-}
-```
-
-This structure is **log-ready**, **audit-friendly**, and **pipeline-integratable**.
-
-
-
----
 
 ---
 
@@ -78,18 +30,6 @@ source venv/bin/activate   # Windows: venv\Scripts\activate
 
 pip install -r requirements.txt
 ```
-
----
-
-##  Usage
-
-### 🔹 Offline Demo
-
-```bash
-python run.py
-```
-
-Generates a sample collision report using bundled TLE data.
 
 ---
 
@@ -141,15 +81,7 @@ docker run --rm --env-file .env -p 8000:8000 \
 
 ---
 
-##  Future Enhancements
 
-* Graph Neural Networks (GNNs) for collision risk prediction
-* Multi-agent LLM negotiation between satellite operators
-* Real-time TLE streaming
-* 3D orbital visualization using **React + Three.js**
-* Interplanetary debris modeling
-
----
 ## Under Development
 
 ## 📜 License
