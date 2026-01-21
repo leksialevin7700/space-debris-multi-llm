@@ -4,43 +4,6 @@
 
 ### **Multi-LLM Space Debris Intelligence & Maneuver Planning System**
 
----
-
-## Overview
-
-This is an end-to-end **space situational awareness (SSA)** platform that combines:
-
-* **Orbital mechanics (SGP4 + TLEs)**
-* **Graph-based collision intelligence**
-* **Multi-LLM agent reasoning**
-* **Autonomous maneuver planning**
-* **Mission-ready reporting APIs**
-
-The system ingests real orbital data, detects high-risk conjunctions, reasons about collision severity, and uses an **LLM-driven Maneuver Agent** to propose, critique, iterate, and finalize collision-avoidance maneuvers — all with explainability and confidence scoring.
-
-
----
-
-##  System Architecture
-
-```
-TLE Data ──▶ Orbit Intelligence Engine ──▶ Conjunction Graph
-                                           │
-                                           ▼
-                               Collision Risk Predictor
-                                           │
-                                           ▼
-                            LLM Maneuver Agent (Model-C)
-                                           │
-                                           ▼
-                                     Mission Reports
-                                           │
-                                           ▼
-                                          API 
-```
-
----
-
 ##  Key Features
 
 | Component                                   | Description                                                                                                                                      |
