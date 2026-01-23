@@ -42,7 +42,7 @@ npm install
 yarn install
 ```
 
-### 4.Configuration
+### 4. Configuration
 Create a .env file in the root directory to configure your LLM keys and settings:
 
 ```ini
@@ -71,7 +71,7 @@ You can also run the maneuver agent directly from the command line:
 python main.py SAT-A SAT-B --distance-km 0.12 --format yaml -o out.yaml
 ```
 
-🐳 Docker Support
+Docker Support
 You can run the entire stack using Docker.
 
 Build & Run
