@@ -4,7 +4,7 @@
 [![Project Blog](https://img.shields.io/badge/Project-Blog-blue)](https://wonderful-trifle-67e81d.netlify.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Orbital Guardian** is an AI-powered platform designed to predict, negotiate, and avoid satellite collisions. It combines orbital mechanics (SGP4) with multi-agent LLMs to generate real-time risk assessments and maneuver plans.
+
 
 ## 🚀 Key Features
 
