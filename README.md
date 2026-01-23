@@ -1,4 +1,4 @@
-markdown
+
 # 🌐 Multi-LLM Space Debris Intelligence & Maneuver Planning System
 
 [![Project Blog](https://img.shields.io/badge/Project-Blog-blue)](https://wonderful-trifle-67e81d.netlify.app/)
