@@ -1,12 +1,13 @@
 
-# 🌐 Multi-LLM Space Debris Intelligence & Maneuver Planning System
+#  Multi-LLM Space Debris Intelligence & Maneuver Planning System
+
 
 [![Project Blog](https://img.shields.io/badge/Project-Blog-blue)](https://wonderful-trifle-67e81d.netlify.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 AI-powered platform designed to predict, negotiate, and avoid satellite collisions. It combines orbital mechanics (SGP4) with multi-agent LLMs to generate real-time risk assessments and maneuver plans.
 
-## 🚀 Key Features
+##  Key Features
 
 | Component | Description |
 | :--- | :--- |
@@ -18,7 +19,7 @@ AI-powered platform designed to predict, negotiate, and avoid satellite collisio
 
 ---
 
-## 🛠️ Installation
+## Installation
 
 ### 1. Clone the Repository
 ```bash
@@ -30,7 +31,10 @@ cd space-debris-multi-llm
 ```bash
 # Create virtual environment
 python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+#macOS
+source venv/bin/activate
+# Windows
+venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 ```
@@ -65,13 +69,13 @@ npm run dev
 # Open http://localhost:3000 to view the Orbital Guardian Dashboard
 ```
 
-CLI Mode (Maneuver Agent)
+#### CLI Mode (Maneuver Agent)
 You can also run the maneuver agent directly from the command line:
 ```bash
 python main.py SAT-A SAT-B --distance-km 0.12 --format yaml -o out.yaml
 ```
 
-Docker Support
+#### Docker Support
 You can run the entire stack using Docker.
 
 Build & Run
