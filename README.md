@@ -1,9 +1,10 @@
 
-#  Multi-LLM Space Debris Intelligence & Maneuver Planning System
+# 🚀 Multi-LLM Space Debris Intelligence & Maneuver Planning System
 
-
-[![Project Blog](https://img.shields.io/badge/Project-Blog-blue)](https://shiny-travesseiro-dfae34.netlify.app/)
+[![Project Blog](https://img.shields.io/badge/🌐-Visit_Project_Blog-blue?style=for-the-badge)](https://shiny-travesseiro-dfae34.netlify.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 
 AI-powered platform designed to predict, negotiate, and avoid satellite collisions. It combines orbital mechanics (SGP4) with multi-agent LLMs to generate real-time risk assessments and maneuver plans.
 
